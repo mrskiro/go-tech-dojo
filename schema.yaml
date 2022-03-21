@@ -168,7 +168,7 @@ components:
       type: object
       properties:
         times:
-          type: integer
+          type: string
           description: 実行回数
     GachaDrawResponse:
       type: object

@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS user_characters (
 
 CREATE TABLE IF NOT EXISTS character_probability (
   id BIGSERIAL PRIMARY KEY,
-  probability REAL NOT NULL,
+  probability SMALLINT NOT NULL,
   character_id SMALLINT NOT NULL,
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL,

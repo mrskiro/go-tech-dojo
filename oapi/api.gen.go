@@ -19,7 +19,7 @@ type CharacterListResponse struct {
 // GachaDrawRequest defines model for GachaDrawRequest.
 type GachaDrawRequest struct {
 	// 実行回数
-	Times *int `json:"times,omitempty"`
+	Times *string `json:"times,omitempty"`
 }
 
 // GachaDrawResponse defines model for GachaDrawResponse.

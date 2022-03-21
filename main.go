@@ -10,9 +10,13 @@ import (
 	httpHandler "github.com/purp1eeeee/go-tech-dojo/handlers/http"
 	"github.com/purp1eeeee/go-tech-dojo/handlers/http/middlewares"
 	"github.com/purp1eeeee/go-tech-dojo/oapi"
+	"github.com/purp1eeeee/go-tech-dojo/repositories/character_probability"
+	"github.com/purp1eeeee/go-tech-dojo/repositories/characters"
 	"github.com/purp1eeeee/go-tech-dojo/repositories/tokens"
 	"github.com/purp1eeeee/go-tech-dojo/repositories/tx"
+	"github.com/purp1eeeee/go-tech-dojo/repositories/user_characters"
 	"github.com/purp1eeeee/go-tech-dojo/repositories/users"
+	"github.com/purp1eeeee/go-tech-dojo/usecases/gacha"
 	"github.com/purp1eeeee/go-tech-dojo/usecases/user"
 )
 
@@ -28,12 +32,18 @@ func main() {
 		return
 	}
 
+	defer db.Close()
+
 	txRepo := tx.NewTxRepository(db)
 	tokensRepo := tokens.NewTokenRepository(db)
 	usersRepo := users.NewUserRepository(db)
+	probabilitiesRepo := character_probability.NewProbabilityRepository(db)
+	charactersRepo := characters.NewCharactersRepository(db)
+	userCharactersRepo := user_characters.NewUserCharactersRepository(db)
 
 	userUseCase := user.NewUserUseCase(txRepo, tokensRepo, usersRepo)
-	handlers := httpHandler.NewHandlers(userUseCase)
+	gachaUseCase := gacha.NewGachaUseCase(txRepo, probabilitiesRepo, charactersRepo, userCharactersRepo)
+	handlers := httpHandler.NewHandlers(userUseCase, gachaUseCase)
 
 	middlewares := middlewares.NewMiddlewares(tokensRepo)
 
