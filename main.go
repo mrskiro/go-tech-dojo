@@ -35,10 +35,11 @@ func main() {
 	userUseCase := user.NewUserUseCase(txRepo, tokensRepo, usersRepo)
 	handlers := httpHandler.NewHandlers(userUseCase)
 
-	middlewares := middlewares.NewMiddlewares()
+	middlewares := middlewares.NewMiddlewares(tokensRepo)
 
 	r := chi.NewRouter()
 	r.Use(middlewares.SetOperaterID)
+	r.Use(middlewares.SetUserIDByToken)
 
 	handler := oapi.HandlerFromMux(handlers, r)
 

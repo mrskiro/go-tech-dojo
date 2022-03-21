@@ -13,6 +13,7 @@ import (
 type UseCase interface {
 	Register(ctx context.Context, name string) (string, error)
 	GetMe(ctx context.Context, token string) (user.User, error)
+	Update(ctx context.Context, user users.User) error
 }
 
 type useCase struct {
@@ -67,4 +68,16 @@ func (u useCase) GetMe(ctx context.Context, token string) (user.User, error) {
 		ID:   user.ID(me.ID),
 		Name: me.Name,
 	}, nil
+}
+
+func (u useCase) Update(ctx context.Context, user users.User) error {
+	err := u.txRepo.Start(ctx, func(ctx context.Context) error {
+		u.usersRepo.DeleteByID(ctx, user.ID)
+		u.usersRepo.Create(ctx, users.User{ID: user.ID, Name: user.Name})
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }

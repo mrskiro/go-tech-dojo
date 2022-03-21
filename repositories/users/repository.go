@@ -8,6 +8,7 @@ import (
 type Repository interface {
 	Create(ctx context.Context, user User) error
 	FindByID(ctx context.Context, userID string) (User, error)
+	DeleteByID(ctx context.Context, userID string) error
 }
 
 type repository struct {
@@ -47,4 +48,18 @@ func (r repository) FindByID(ctx context.Context, userID string) (User, error) {
 		return User{}, err
 	}
 	return u, nil
+}
+
+func (r repository) DeleteByID(ctx context.Context, userID string) error {
+	query := "UPDATE users SET updated_at=NOW(), deleted_at=NOW() WHERE id = $1"
+	prep, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	defer prep.Close()
+	err = prep.QueryRow(userID).Err()
+	if err != nil {
+		return err
+	}
+	return nil
 }
