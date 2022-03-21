@@ -12,6 +12,7 @@ import (
 
 type UseCase interface {
 	Register(ctx context.Context, name string) (string, error)
+	GetMe(ctx context.Context, token string) (user.User, error)
 }
 
 type useCase struct {
@@ -50,4 +51,20 @@ func (u useCase) Register(ctx context.Context, name string) (string, error) {
 		return "", err
 	}
 	return token.String(), nil
+}
+
+func (u useCase) GetMe(ctx context.Context, token string) (user.User, error) {
+	userID, err := u.tokensRepo.FindUserIDByToken(ctx, token)
+	if err != nil {
+		return user.User{}, err
+	}
+	me, err := u.usersRepo.FindByID(ctx, userID)
+	if err != nil {
+		return user.User{}, err
+	}
+
+	return user.User{
+		ID:   user.ID(me.ID),
+		Name: me.Name,
+	}, nil
 }

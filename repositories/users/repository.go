@@ -7,6 +7,7 @@ import (
 
 type Repository interface {
 	Create(ctx context.Context, user User) error
+	FindByID(ctx context.Context, userID string) (User, error)
 }
 
 type repository struct {
@@ -31,4 +32,19 @@ func (r repository) Create(ctx context.Context, user User) error {
 		return err
 	}
 	return nil
+}
+
+func (r repository) FindByID(ctx context.Context, userID string) (User, error) {
+	u := User{}
+	query := "SELECT id, name FROM users WHERE id = $1"
+	prep, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return User{}, err
+	}
+	defer prep.Close()
+	err = prep.QueryRow(userID).Scan(&u.ID, &u.Name)
+	if err != nil {
+		return User{}, err
+	}
+	return u, nil
 }

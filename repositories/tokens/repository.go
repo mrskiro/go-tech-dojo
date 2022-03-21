@@ -7,6 +7,7 @@ import (
 
 type Repository interface {
 	Create(ctx context.Context, userID, token string) error
+	FindUserIDByToken(ctx context.Context, token string) (string, error)
 }
 
 type repository struct {
@@ -26,4 +27,19 @@ func (r repository) Create(ctx context.Context, userID, token string) error {
 		return err
 	}
 	return nil
+}
+
+func (r repository) FindUserIDByToken(ctx context.Context, token string) (string, error) {
+	query := "SELECT user_id FROM tokens WHERE token = $1"
+	prep, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return "", err
+	}
+	defer prep.Close()
+	var userID string
+	err = prep.QueryRow(token).Scan(&userID)
+	if err != nil {
+		return "", err
+	}
+	return userID, nil
 }

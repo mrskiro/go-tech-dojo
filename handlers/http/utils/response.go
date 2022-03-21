@@ -27,6 +27,10 @@ func RenderBadRequest(ctx context.Context, w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusBadRequest)
 }
 
+func RenderUnauthorized(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusUnauthorized)
+}
+
 func RenderInternalServerError(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusInternalServerError)
 }

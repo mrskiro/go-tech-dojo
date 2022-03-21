@@ -4,9 +4,11 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/purp1eeeee/go-tech-dojo/config"
 	"github.com/purp1eeeee/go-tech-dojo/db"
 	httpHandler "github.com/purp1eeeee/go-tech-dojo/handlers/http"
+	"github.com/purp1eeeee/go-tech-dojo/handlers/http/middlewares"
 	"github.com/purp1eeeee/go-tech-dojo/oapi"
 	"github.com/purp1eeeee/go-tech-dojo/repositories/tokens"
 	"github.com/purp1eeeee/go-tech-dojo/repositories/tx"
@@ -32,7 +34,13 @@ func main() {
 
 	userUseCase := user.NewUserUseCase(txRepo, tokensRepo, usersRepo)
 	handlers := httpHandler.NewHandlers(userUseCase)
-	handler := oapi.Handler(handlers)
+
+	middlewares := middlewares.NewMiddlewares()
+
+	r := chi.NewRouter()
+	r.Use(middlewares.SetOperaterID)
+
+	handler := oapi.HandlerFromMux(handlers, r)
 
 	mux := http.NewServeMux()
 	mux.Handle("/", handler)

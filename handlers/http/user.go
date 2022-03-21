@@ -1,16 +1,30 @@
 package http
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/purp1eeeee/go-tech-dojo/ctxlib"
 	"github.com/purp1eeeee/go-tech-dojo/handlers/http/utils"
 	"github.com/purp1eeeee/go-tech-dojo/oapi"
 )
 
 func (h Handlers) GetUserGet(w http.ResponseWriter, r *http.Request, params oapi.GetUserGetParams) {
-	fmt.Println("getUserGet")
+	ctx := r.Context()
+	token, err := ctxlib.GetTokenFromContext(ctx)
+	if err != nil {
+		utils.RenderUnauthorized(ctx, w, r)
+	}
+
+	me, err := h.userUseCase.GetMe(ctx, token)
+	if err != nil {
+		log.Println(err)
+		utils.RenderInternalServerError(ctx, w, r)
+		return
+	}
+	utils.RenderJson(ctx, w, r, oapi.UserGetResponse{
+		Name: &me.Name,
+	})
 }
 
 func (h Handlers) PostUserCreate(w http.ResponseWriter, r *http.Request) {
@@ -35,4 +49,5 @@ func (h Handlers) PostUserCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handlers) PutUserUpdate(w http.ResponseWriter, r *http.Request, params oapi.PutUserUpdateParams) {
+
 }
