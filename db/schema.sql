@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  deleted_at TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tokens (
+  user_id VARCHAR(100) PRIMARY KEY,
+  token VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP NOT NULL
+);
