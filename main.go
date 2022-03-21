@@ -1,17 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+
+	h "github.com/purp1eeeee/go-tech-dojo/handlers/http"
+	"github.com/purp1eeeee/go-tech-dojo/oapi"
 )
 
 func main() {
-	fmt.Println("Hello world")
+	handlers := h.NewHandlers()
+	handler := oapi.Handler(handlers)
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Hello World!", r.Method)
-	})
+	mux.Handle("/", handler)
 	err := http.ListenAndServe(":8080", mux)
 	if err != nil {
 		log.Fatal(err)
