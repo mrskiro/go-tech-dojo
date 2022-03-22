@@ -16,6 +16,7 @@ import (
 	"github.com/purp1eeeee/go-tech-dojo/repositories/tx"
 	"github.com/purp1eeeee/go-tech-dojo/repositories/user_characters"
 	"github.com/purp1eeeee/go-tech-dojo/repositories/users"
+	"github.com/purp1eeeee/go-tech-dojo/usecases/character"
 	"github.com/purp1eeeee/go-tech-dojo/usecases/gacha"
 	"github.com/purp1eeeee/go-tech-dojo/usecases/user"
 )
@@ -43,7 +44,8 @@ func main() {
 
 	userUseCase := user.NewUserUseCase(txRepo, tokensRepo, usersRepo)
 	gachaUseCase := gacha.NewGachaUseCase(txRepo, probabilitiesRepo, charactersRepo, userCharactersRepo)
-	handlers := httpHandler.NewHandlers(userUseCase, gachaUseCase)
+	characterUseCase := character.NewCharacterUseCase(txRepo, charactersRepo, userCharactersRepo)
+	handlers := httpHandler.NewHandlers(userUseCase, gachaUseCase, characterUseCase)
 
 	middlewares := middlewares.NewMiddlewares(tokensRepo)
 

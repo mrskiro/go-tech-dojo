@@ -9,6 +9,7 @@ import (
 
 type Repository interface {
 	Get(ctx context.Context) (Characters, error)
+	GetByID(ctx context.Context, id uint64) (Character, error)
 }
 
 type repository struct {
@@ -49,6 +50,21 @@ func (r repository) Get(ctx context.Context) (Characters, error) {
 		return nil, err
 	}
 	return characters, nil
+}
+
+func (r repository) GetByID(ctx context.Context, id uint64) (Character, error) {
+	c := Character{}
+	query := "SELECT id, name FROM characters WHERE id = $1"
+	prep, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return Character{}, err
+	}
+	defer prep.Close()
+	err = prep.QueryRow(id).Scan(&c.ID, &c.Name)
+	if err != nil {
+		return Character{}, err
+	}
+	return c, nil
 }
 
 func (cs Characters) ToDomain() character.Characters {

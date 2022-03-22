@@ -40,6 +40,7 @@ func (h Handlers) PostGachaDraw(w http.ResponseWriter, r *http.Request, params o
 		utils.RenderInternalServerError(ctx, w, r)
 		return
 	}
+
 	results := make([]oapi.GachaResult, len(characters))
 	for i, v := range characters {
 		id := strconv.FormatUint(v.ID, 10)
@@ -53,5 +54,4 @@ func (h Handlers) PostGachaDraw(w http.ResponseWriter, r *http.Request, params o
 	utils.RenderJson(ctx, w, r, oapi.GachaDrawResponse{
 		Results: &results,
 	})
-
 }

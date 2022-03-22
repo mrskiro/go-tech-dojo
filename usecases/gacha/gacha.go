@@ -71,7 +71,7 @@ func (u useCase) Drow(ctx context.Context, userID string, times int) (character.
 
 	err = u.txRepo.Start(ctx, func(ctx context.Context) error {
 		for _, v := range results {
-			err = u.userCharactersRepo.Create(ctx, userID, user_characters.Character{ID: v.ID, Name: v.Name})
+			err = u.userCharactersRepo.Create(ctx, userID, user_characters.Character{ID: v.ID})
 			if err != nil {
 				continue
 			}
