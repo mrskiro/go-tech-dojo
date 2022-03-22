@@ -37,7 +37,7 @@ func (r repository) Create(ctx context.Context, user User) error {
 
 func (r repository) FindByID(ctx context.Context, userID string) (User, error) {
 	u := User{}
-	query := "SELECT id, name FROM users WHERE id = $1"
+	query := "SELECT id, name FROM users WHERE id = $1 AND deleted_at IS NULL"
 	prep, err := r.db.PrepareContext(ctx, query)
 	if err != nil {
 		return User{}, err
